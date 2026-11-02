@@ -1,0 +1,7 @@
+# Local scratch/source thumbnails are not part of the shipped site.
+image-search/
+tools/__pycache__/
+__pycache__/
+*.py[cod]
+node_modules/
+.DS_Store

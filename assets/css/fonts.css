@@ -1,0 +1,9 @@
+/* Local webfonts. No Google Fonts or other remote font service is used. */
+@import url("../vendor/fontsource/playfair-display/latin-400-italic.css");
+@import url("../vendor/fontsource/playfair-display/latin-600.css");
+@import url("../vendor/fontsource/playfair-display/latin-700.css");
+@import url("../vendor/fontsource/playfair-display/latin-700-italic.css");
+@import url("../vendor/fontsource/source-sans-3/latin-400.css");
+@import url("../vendor/fontsource/source-sans-3/latin-400-italic.css");
+@import url("../vendor/fontsource/source-sans-3/latin-600.css");
+@import url("../vendor/fontsource/source-sans-3/latin-700.css");
