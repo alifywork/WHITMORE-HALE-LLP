@@ -59,3 +59,14 @@ python3 tools/prepare_assets.py    # re-download pinned npm packages and rebuild
 ## Compliance notes
 
 The site is a design concept. Attorney names, testimonials, recognition references, statistics, case results and client-portal behavior are illustrative. The footer includes Attorney Advertising, prior-results, bar-admission and representative-photography disclosures. Connect a secure intake endpoint and replace illustrative copy with approved content before publication.
+
+## Fiverr gig portfolio
+
+The following marketing deliverables are derived from the site and are not part of its runtime:
+
+- `Whitmore-Hale-LLP-Fiverr-Gig.pdf` — 7-page A4-landscape portfolio case study with embedded Playfair Display / Source Sans 3 fonts, website screenshots, design-system notes, technical build details and suggested Fiverr listing copy.
+- `Whitmore-Hale-LLP-Fiverr-Gig-Image.jpg` — 1280×769 cover crop for a gig gallery.
+- `Whitmore-Hale-LLP-Fiverr-Cover.png` — full A4 cover render.
+- `Whitmore-Hale-LLP-Fiverr-Thumbnail.jpg` — 550×370 thumbnail.
+
+The PDF is a portfolio attachment; Fiverr gallery slots normally use the exported JPG/PNG images. All firm names, portraits, statistics and results shown are illustrative website content.
