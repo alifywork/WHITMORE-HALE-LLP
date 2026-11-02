@@ -23,7 +23,7 @@ No CDN, Google Fonts, remote icon font, remote map, analytics, social widget or 
 | Phosphor Icons Web 2.1.2 | `assets/vendor/phosphor/regular/` — equivalent Phosphor classes replace the brief's Font Awesome map so a single local icon font is loaded |
 | GSAP 3.13.0 + ScrollTrigger | `assets/vendor/gsap/` |
 | Playfair Display + Source Sans 3 | `assets/vendor/fontsource/` |
-| Supplied logos, all SVG variants and favicons | `assets/brand/` |
+| Supplied logos, all SVG variants and favicons | root-level `logo*.svg`, `favicon*`, `apple-touch-icon.png` and `site.webmanifest`; source/PNG derivatives in `assets/brand/` |
 | Optimized local photographs and map | `assets/images/` |
 | Site CSS / JavaScript | `assets/css/`, `assets/js/main.js` |
 

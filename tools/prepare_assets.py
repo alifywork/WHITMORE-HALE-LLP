@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import base64
 import json
+import html
 import shutil
 import subprocess
 import sys
@@ -167,11 +168,18 @@ def image_size(path: Path) -> tuple[int, int]:
 
 
 def svg_with_embedded_png(source: Path, target: Path, label: str) -> None:
+    """Create a self-contained SVG wrapper around a local PNG derivative.
+
+    The PNG is embedded as a data URI because SVG-as-image decoders do not load
+    relative external resources. The label is XML-escaped so an ampersand in the
+    firm name cannot make the SVG invalid.
+    """
     width, height = image_size(source)
     encoded = base64.b64encode(source.read_bytes()).decode("ascii")
+    safe_label = html.escape(label, quote=True)
     target.write_text(
-        f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-label="{label}">
-  <image width="{width}" height="{height}" preserveAspectRatio="xMidYMid meet" href="data:image/png;base64,{encoded}"/>
+        f'''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-label="{safe_label}">
+  <image width="{width}" height="{height}" preserveAspectRatio="xMidYMid meet" href="data:image/png;base64,{encoded}" xlink:href="data:image/png;base64,{encoded}"/>
 </svg>
 ''',
         encoding="utf-8",
@@ -232,17 +240,46 @@ def build_brand() -> None:
         str(BRAND / "favicon.ico"),
     )
 
-    svg_specs = [
-        (header, BRAND / "logo.svg", "Whitmore & Hale LLP horizontal logo"),
-        (header, BRAND / "logo-horizontal.svg", "Whitmore & Hale LLP horizontal logo"),
-        (white_final, BRAND / "logo-white.svg", "Whitmore & Hale LLP white and gold logo"),
-        (mono, BRAND / "logo-mono.svg", "Whitmore & Hale LLP monochrome navy logo"),
-        (icon, BRAND / "logo-icon-only.svg", "Whitmore & Hale LLP scales mark"),
-        (vertical, BRAND / "logo-vertical.svg", "Whitmore & Hale LLP vertical logo"),
-        (favicon_master, BRAND / "favicon.svg", "Whitmore & Hale LLP WH crest"),
+    derived_pngs = {
+        "logo.png": header,
+        "logo-white.png": white_final,
+        "logo-mono.png": mono,
+        "logo-icon-only.png": icon,
+        "logo-vertical.png": vertical,
+        "favicon.png": favicon_master,
+    }
+    for name, source in derived_pngs.items():
+        copy(source, BRAND / name)
+
+    brand_svg_specs = [
+        (BRAND / "logo.png", BRAND / "logo.svg", "Whitmore & Hale LLP horizontal logo"),
+        (BRAND / "logo.png", BRAND / "logo-horizontal.svg", "Whitmore & Hale LLP horizontal logo"),
+        (BRAND / "logo-white.png", BRAND / "logo-white.svg", "Whitmore & Hale LLP white and gold logo"),
+        (BRAND / "logo-mono.png", BRAND / "logo-mono.svg", "Whitmore & Hale LLP monochrome navy logo"),
+        (BRAND / "logo-icon-only.png", BRAND / "logo-icon-only.svg", "Whitmore & Hale LLP scales mark"),
+        (BRAND / "logo-vertical.png", BRAND / "logo-vertical.svg", "Whitmore & Hale LLP vertical logo"),
+        (BRAND / "favicon.png", BRAND / "favicon.svg", "Whitmore & Hale LLP WH crest"),
     ]
-    for source, target, label in svg_specs:
+    for source, target, label in brand_svg_specs:
         svg_with_embedded_png(source, target, label)
+
+    root_svg_specs = [
+        (BRAND / "logo.png", ROOT / "logo.svg", "Whitmore & Hale LLP horizontal logo"),
+        (BRAND / "logo.png", ROOT / "logo-horizontal.svg", "Whitmore & Hale LLP horizontal logo"),
+        (BRAND / "logo-white.png", ROOT / "logo-white.svg", "Whitmore & Hale LLP white and gold logo"),
+        (BRAND / "logo-mono.png", ROOT / "logo-mono.svg", "Whitmore & Hale LLP monochrome navy logo"),
+        (BRAND / "logo-icon-only.png", ROOT / "logo-icon-only.svg", "Whitmore & Hale LLP scales mark"),
+        (BRAND / "logo-vertical.png", ROOT / "logo-vertical.svg", "Whitmore & Hale LLP vertical logo"),
+        (BRAND / "favicon.png", ROOT / "favicon.svg", "Whitmore & Hale LLP WH crest"),
+    ]
+    for source, target, label in root_svg_specs:
+        svg_with_embedded_png(source, target, label)
+
+    for name in (
+        "header-logo.png", "logo-with-bg.png", "favicon-16.png", "favicon-32.png",
+        "favicon-48.png", "favicon-192.png", "favicon-512.png", "apple-touch-icon.png", "favicon.ico",
+    ):
+        copy(BRAND / name, ROOT / name)
 
     manifest = {
         "name": "Whitmore & Hale LLP",
@@ -257,8 +294,16 @@ def build_brand() -> None:
         "start_url": "./",
     }
     (BRAND / "site.webmanifest").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+
+    root_manifest = dict(manifest)
+    root_manifest["icons"] = [
+        {"src": "assets/brand/favicon-192.png", "sizes": "192x192", "type": "image/png"},
+        {"src": "assets/brand/favicon-512.png", "sizes": "512x512", "type": "image/png"},
+    ]
+    (ROOT / "site.webmanifest").write_text(json.dumps(root_manifest, indent=2) + "\n", encoding="utf-8")
+
     (BRAND / "README.md").write_text(
-        """# Brand assets\n\n`header-logo.png` and `logo-with-bg.png` are the two original files supplied by\nthe client. All other logo/favicon files are deterministic local derivatives of\n`header-logo.png`; the SVGs embed their raster artwork so they also render when\nused as an `<img>` source. No remote logo or icon service is referenced.\n""",
+        """# Brand assets\n\n`header-logo.png` and `logo-with-bg.png` are the two original files supplied by\nthe client. All other logo/favicon files are deterministic local derivatives of\n`header-logo.png`.\n\nThe SVG files are self-contained wrappers around local PNG derivatives: the PNG\nis embedded as a data URI and the label is XML-escaped, so the files render when\nused as an `<img>` source. Root-level `logo*.svg` and `favicon.svg` files provide\nthe exact URLs requested in the brief. No remote logo or icon service is used.\n""",
         encoding="utf-8",
     )
     shutil.rmtree(work)

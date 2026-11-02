@@ -276,6 +276,22 @@
     });
   }
 
+  function initializeMobileNavDismiss() {
+    const collapse = document.getElementById("primaryNav");
+    if (!collapse || !window.bootstrap) return;
+    $$('#primaryNav a:not([data-bs-toggle])').forEach((link) => {
+      link.addEventListener("click", () => {
+        if (collapse.classList.contains("show")) {
+          window.bootstrap.Collapse.getOrCreateInstance(collapse).hide();
+        }
+        $$('.dropdown-menu.show', collapse).forEach((menu) => menu.classList.remove("show"));
+        $$('.dropdown-toggle[aria-expanded="true"]', collapse).forEach((toggle) => {
+          toggle.setAttribute("aria-expanded", "false");
+        });
+      });
+    });
+  }
+
   function initializeDemoForms() {
     $$("[data-demo-form]").forEach((form) => {
       form.addEventListener("submit", (event) => {
@@ -523,6 +539,7 @@
     setCurrentYear();
     initializeLanguageToggle();
     initializeSmoothAnchors();
+    initializeMobileNavDismiss();
     initializeDemoForms();
     initializeTestimonialSlider();
     initializeFilters();

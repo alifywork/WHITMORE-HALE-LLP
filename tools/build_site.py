@@ -177,7 +177,7 @@ def site_header():
 <header class="site-header" id="top">
   <div class="container header-inner">
     <a class="brand" href="index.html" aria-label="Whitmore & Hale LLP home">
-      <img src="assets/brand/logo.svg" alt="Whitmore & Hale LLP">
+      <img src="logo.svg" alt="Whitmore & Hale LLP">
     </a>
     <nav class="navbar navbar-expand-xl site-navbar" aria-label="Primary navigation">
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#primaryNav" aria-controls="primaryNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -221,7 +221,7 @@ def site_footer():
   <div class="container">
     <div class="row g-4">
       <div class="col-lg-4 col-md-6">
-        <img class="footer-logo" src="assets/brand/logo-white.svg" alt="Whitmore & Hale LLP">
+        <img class="footer-logo" src="logo-white.svg" alt="Whitmore & Hale LLP">
         <p class="footer-about">A New York corporate law firm with a Boston office, advising businesses, boards and families since 1998. Measured counsel, senior attention and records built to withstand scrutiny.</p>
         <div class="badge-row">
           <span class="recognition-badge">Super Lawyers</span>
@@ -284,7 +284,7 @@ def portal_modal():
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <img src="assets/brand/logo-with-bg.png" alt="Whitmore &amp; Hale LLP" style="width: 230px; max-width: 60%;">
+        <img src="logo-with-bg.png" alt="Whitmore &amp; Hale LLP" style="width: 230px; max-width: 60%;">
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -320,14 +320,14 @@ def shell(title, description, body, active="", page="home", extra_head=""):
   <title>{h(title)} | Whitmore &amp; Hale LLP</title>
   <meta name="description" content="{h(description)}">
   <meta name="theme-color" content="#0A2540">
-  <link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/brand/favicon-32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/brand/favicon-16.png">
-  <link rel="icon" type="image/png" sizes="48x48" href="assets/brand/favicon-48.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="assets/brand/favicon-192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="assets/brand/favicon-512.png">
-  <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
-  <link rel="manifest" href="assets/brand/site.webmanifest">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="favicon-512.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
   <link rel="preload" href="assets/vendor/fontsource/playfair-display/files/playfair-display-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/vendor/fontsource/source-sans-3/files/source-sans-3-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
@@ -392,7 +392,7 @@ def trust_strip():
         ("ph-certificate", "NY & MA Bar", "State admissions"),
         ("ph-shield-check", "AV Preeminent", "Martindale-Hubbell"),
         ("ph-user-focus", "Senior Attention", "Partner-led matters"),
-        ("ph-clock", "Since 1998", "28 years of practice"),
+        ("ph-clock", "Since 1998", "26 years of practice"),
     ]
     markup = "".join(
         f'<div class="trust-item"><i class="ph {icon}" aria-hidden="true"></i><div><strong>{h(strong)}</strong><span>{h(small)}</span></div></div>'
@@ -494,15 +494,17 @@ def faq_accordion(items, prefix):
 
 
 def contact_form(prefix, full=True):
-    phone_company = '''
+    phone_field = f'''
       <div class="form-field">
-        <label class="form-label" for="%s-phone">Phone</label>
-        <input class="form-control" id="%s-phone" name="phone" type="tel" autocomplete="tel">
-      </div>
+        <label class="form-label" for="{prefix}-phone">Phone</label>
+        <input class="form-control" id="{prefix}-phone" name="phone" type="tel" autocomplete="tel">
+      </div>'''
+    company_field = f'''
       <div class="form-field">
-        <label class="form-label" for="%s-company">Company / Organization</label>
-        <input class="form-control" id="%s-company" name="company" type="text" autocomplete="organization">
-      </div>''' % (prefix, prefix, prefix, prefix) if full else ""
+        <label class="form-label" for="{prefix}-company">Company / Organization</label>
+        <input class="form-control" id="{prefix}-company" name="company" type="text" autocomplete="organization">
+      </div>''' if full else ""
+    extra_fields = phone_field + company_field
     return f'''
 <form class="form-shell" data-demo-form data-success="Thank you. Your request has been validated locally. Please call +1 (212) 555-0170 or connect a secure intake service before publishing." aria-label="Consultation request">
   <span class="eyebrow">Confidential Inquiry</span>
@@ -517,8 +519,8 @@ def contact_form(prefix, full=True):
       <label class="form-label" for="{prefix}-email">Email <span class="required-marker">*</span></label>
       <input class="form-control" id="{prefix}-email" name="email" type="email" autocomplete="email" required>
     </div>
-    {phone_company}
-    <div class="form-field{' full' if phone_company else ''}">
+    {extra_fields}
+    <div class="form-field{' full' if full else ''}">
       <label class="form-label" for="{prefix}-area">Practice area <span class="required-marker">*</span></label>
       <select class="form-select" id="{prefix}-area" name="practice_area" data-practice-select required>
         <option value="" selected disabled>Select an area</option>
@@ -605,7 +607,7 @@ def stats_section():
     <div class="stat-grid">
       <div class="stat"><span class="stat-number" data-count="1200" data-suffix="+">1,200+</span><span class="stat-label">Matters handled</span></div>
       <div class="stat"><span class="stat-number" data-count="94" data-suffix="%">94%</span><span class="stat-label">Favorable resolution rate</span></div>
-      <div class="stat"><span class="stat-number" data-count="28">28</span><span class="stat-label">Years serving clients</span></div>
+      <div class="stat"><span class="stat-number" data-count="26">26</span><span class="stat-label">Years serving clients</span></div>
       <div class="stat"><span class="stat-number" data-count="40">40</span><span class="stat-label">Attorneys</span></div>
     </div>
     <p class="disclaimer-note text-center mb-0 mt-4">Statistics are illustrative website copy. Past results do not guarantee a similar outcome.</p>
@@ -1423,7 +1425,7 @@ def privacy_page():
     </div>
   </div>
 </section>
-<section class="section section-sm bg-paper"><div class="container text-center"><img src="assets/brand/logo-mono.svg" alt="Whitmore &amp; Hale LLP monochrome logo" style="width:240px;max-width:70%"><p class="small-caps mt-4 mb-0">A document with a clear record</p></div></section>'''
+<section class="section section-sm bg-paper"><div class="container text-center"><img src="logo-mono.svg" alt="Whitmore &amp; Hale LLP monochrome logo" style="width:240px;max-width:70%"><p class="small-caps mt-4 mb-0">A document with a clear record</p></div></section>'''
 
 
 def terms_page():
@@ -1460,7 +1462,7 @@ def not_found_page():
     return f'''
 <section class="error-page">
   <div class="container">
-    <img class="error-crest" src="assets/brand/logo-vertical.svg" alt="Whitmore &amp; Hale LLP crest">
+    <img class="error-crest" src="logo-vertical.svg" alt="Whitmore &amp; Hale LLP crest">
     <span class="eyebrow">Page not found</span>
     <span class="error-code">404</span>
     <h1>The page is not in the record.</h1>
